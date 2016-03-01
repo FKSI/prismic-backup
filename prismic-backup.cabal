@@ -37,6 +37,7 @@ executable prismic-backup
                      , prismic-backup
                      , text
                      , optparse-generic == 1.0.0
+                     , regex-compat == 0.95.1
                      , wreq == 0.4.1.0
   default-language:    Haskell2010
 

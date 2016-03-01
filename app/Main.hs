@@ -9,11 +9,12 @@ import Network.Wreq.Session (Session)
 import qualified Network.Wreq.Session as WS
 import Options.Generic
 import qualified Storage as S
+import qualified Text.Regex as R
 
 data Config = Config {
     endpoint :: String,
     ref:: String,
-    docType :: String,
+    docTypes :: String,
     output :: Maybe FilePath }
     deriving (Show, Generic)
 
@@ -23,10 +24,10 @@ main :: IO ()
 main = WS.withSession $ \sess -> do
     config <- getRecord "Prismic Backup"
     let cfg = (config :: Config)
-    let documentType = docType cfg
-    let query = P.Query (endpoint cfg) (ref cfg) documentType
     let outputDir = M.fromMaybe defaultOutputDir (output cfg)
-    fetchDocuments sess outputDir documentType $ Left query
+    let documentTypes = R.splitRegex (R.mkRegex ",") $ docTypes cfg
+    let mkQuery = P.Query (endpoint cfg) (ref cfg)
+    mapM_ (\dt -> fetchDocuments sess outputDir dt $ Left $ mkQuery dt) documentTypes
 
 fetchDocuments :: Session -> FilePath -> String -> Either P.Query String -> IO ()
 fetchDocuments sess outputDir documentType target = do

@@ -2,7 +2,6 @@
 
 module Main where
 
-import qualified Data.Text as T (pack)
 import qualified Data.Maybe as M (fromMaybe)
 import qualified Prismic as P
 import qualified Http as H
@@ -25,7 +24,7 @@ main = WS.withSession $ \sess -> do
     config <- getRecord "Prismic Backup"
     let cfg = (config :: Config)
     let documentType = docType cfg
-    let query = P.Query (endpoint cfg) (T.pack $ ref cfg) (T.pack documentType)
+    let query = P.Query (endpoint cfg) (ref cfg) documentType
     let outputDir = M.fromMaybe defaultOutputDir (output cfg)
     fetchDocuments sess outputDir documentType $ Left query
 

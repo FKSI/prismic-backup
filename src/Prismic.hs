@@ -7,7 +7,6 @@ import Data.Aeson (Value, Array, FromJSON, Result(..), encode, fromJSON)
 import Data.ByteString.Lazy (toStrict)
 import qualified Data.List as L
 import Data.Text (Text)
-import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Vector (Vector)
 import qualified Data.Vector as V (empty, singleton, concatMap)
@@ -17,8 +16,8 @@ import Network.Wreq (Options, defaults, param)
 
 data Query = Query {
     endpoint :: String,
-    reference :: Text,
-    documentType :: Text }
+    reference :: String,
+    documentType :: String }
     deriving (Show)
 
 queryString :: Query -> String
@@ -27,8 +26,8 @@ queryString q = "?" ++ L.intercalate "&" params
         params = fmap (\(n, v) -> n ++ "=" ++ urlEncode v) [format, pageSize, ref, query]
         format = ("format", "json")
         pageSize = ("pageSize", "100")
-        ref = ("ref", T.unpack (reference q))
-        query = ("q", "[[:d=at(document.type,\"" ++ T.unpack (documentType q) ++ "\")]]")
+        ref = ("ref", reference q)
+        query = ("q", "[[:d=at(document.type,\"" ++ documentType q ++ "\")]]")
 
 data Res = Res {
     page :: Int,

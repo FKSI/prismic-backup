@@ -27,10 +27,10 @@ main = WS.withSession $ \sess -> do
     let outputDir = M.fromMaybe defaultOutputDir (output cfg)
     let documentTypes = R.splitRegex (R.mkRegex ",") $ docTypes cfg
     let mkQuery = P.Query (endpoint cfg) (ref cfg)
-    mapM_ (\dt -> fetchDocuments sess outputDir dt $ Left $ mkQuery dt) documentTypes
+    mapM_ (\dt -> fetchDocuments sess outputDir $ Left $ mkQuery dt) documentTypes
 
-fetchDocuments :: Session -> FilePath -> String -> Either P.Query String -> IO ()
-fetchDocuments sess outputDir documentType target = do
+fetchDocuments :: Session -> FilePath -> Either P.Query String -> IO ()
+fetchDocuments sess outputDir target = do
     let url = case target of Left q -> P.endpoint q ++ P.queryString q
                              Right u -> u
     r <- H.doQuery sess url
@@ -39,10 +39,10 @@ fetchDocuments sess outputDir documentType target = do
         Right res -> do
             let docs = P.extractDocuments res
             --putStrLn $ show docs
-            S.storeDocuments outputDir documentType docs
+            S.storeDocuments outputDir docs
             let next = P.next_page res
             case next of Nothing -> return ()
-                         Just u -> fetchDocuments sess outputDir documentType $ Right u
+                         Just u -> fetchDocuments sess outputDir $ Right u
 
 defaultOutputDir :: FilePath
 defaultOutputDir = "./output"

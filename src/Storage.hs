@@ -8,9 +8,12 @@ import qualified Prismic as P
 import System.Directory (createDirectoryIfMissing)
 import System.FilePath (normalise, makeValid)
 
-storeDocument :: FilePath -> String -> (String, Text) -> IO ()
-storeDocument outputDir docType (id, doc) = do
+storeDocument :: FilePath -> P.Document -> IO ()
+storeDocument outputDir document = do
+    let docType = P._type document
     let dirPath = mkDirPath outputDir docType
+    let id = P._id document
+    let doc = P.serializeDocument document
     _ <- createDirectoryIfMissing True dirPath
     let filePath = mkFilePath dirPath id
     IO.writeFile filePath doc
@@ -26,7 +29,7 @@ mkFilePath outputDir id = makeValid $ normalise path
     where
         path = outputDir ++ "/" ++ id ++ ".json"
 
-storeDocuments :: FilePath -> String -> Vector (String, Text) -> IO ()
-storeDocuments outputDir docType docs = do
-    _ <- V.mapM (\d -> storeDocument outputDir docType d) docs
+storeDocuments :: FilePath -> Vector P.Document -> IO ()
+storeDocuments outputDir docs = do
+    _ <- V.mapM (\d -> storeDocument outputDir d) docs
     return ()

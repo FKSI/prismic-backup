@@ -3,7 +3,8 @@
 module Prismic where
 
 import Control.Lens
-import Data.Aeson (Value, Array, FromJSON, Result(..), encode, fromJSON)
+import Data.Aeson (Value, Array, Object, FromJSON, ToJSON, Result(..), encode, fromJSON, parseJSON, toJSON)
+import Data.Aeson.Types (genericParseJSON, genericToJSON, defaultOptions, fieldLabelModifier)
 import Data.ByteString.Lazy (toStrict)
 import qualified Data.List as L
 import Data.Text (Text)
@@ -43,19 +44,34 @@ data Res = Res {
     deriving (Show, Generic, FromJSON)
 
 data Document = Document {
-    id :: String }
-    deriving (Generic, FromJSON)
+    _id :: String,
+    _data :: Object,
+    _href :: String,
+    _type :: String,
+    _slugs :: Value,
+    _tags :: Value,
+    _linked_documents :: Value,
+    _uid :: Value }
+    deriving (Generic)
 
-extractDocuments :: Res -> Vector (String, Text)
+instance ToJSON Document where
+    toJSON = genericToJSON defaultOptions { fieldLabelModifier = drop 1 }
+
+instance FromJSON Document where
+    parseJSON = genericParseJSON defaultOptions { fieldLabelModifier = drop 1 }
+
+extractDocuments :: Res -> Vector Document
 extractDocuments res = V.concatMap parseDocument $ results res
     where
-        parseDocument r = case getId r of
+        parseDocument r = case parseData r of
             Nothing -> V.empty
-            Just id -> V.singleton (id, getDocument r)
-        getDocument = decodeUtf8 . toStrict . encode
-        getId :: Value -> Maybe String
-        getId r = resultToMaybe $ fmap Prismic.id $ fromJSON r
+            Just d -> V.singleton d
+        parseData :: Value -> Maybe Document
+        parseData r = resultToMaybe $ fromJSON r
 
 resultToMaybe :: Result a -> Maybe a
 resultToMaybe (Error _) = Nothing
 resultToMaybe (Success a) = Just a
+
+serializeDocument :: Document -> Text
+serializeDocument = decodeUtf8 . toStrict . encode

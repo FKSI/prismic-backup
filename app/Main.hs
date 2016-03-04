@@ -21,7 +21,7 @@ data Config = Config {
 instance ParseRecord Config
 
 main :: IO ()
-main = WS.withSession $ \sess -> do
+main = WS.withAPISession $ \sess -> do
     config <- getRecord "Prismic Backup"
     let cfg = (config :: Config)
     let outputDir = M.fromMaybe defaultOutputDir (output cfg)

@@ -4,6 +4,7 @@ module Http where
 
 import Control.Lens
 import Data.Aeson (eitherDecode)
+import Data.ByteString.Lazy (ByteString)
 import Data.Text (Text)
 import Network.Wreq
 import Network.Wreq.Session (Session)
@@ -18,3 +19,9 @@ doQuery sess q = do
     let body = res ^. responseBody
     --putStrLn $ show body
     return $ eitherDecode body
+
+doQueryResource :: Session -> String -> IO (Maybe ByteString)
+doQueryResource sess url = do
+    res <- S.get sess url
+    putStrLn $ "[Fetched] " ++ url
+    return $ res ^? responseBody

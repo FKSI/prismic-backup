@@ -15,6 +15,7 @@ See https://qa.prismic.io/102/is-there-a-way-to-export-all-data-and-site-content
 - backup documents from a public [Prismic.io](https://prismic.io/) repository
 - create a JSON file for each document
 - backup several document types at once
+- find URLs in documents, fetch them and store data in a `_rc` directory
 
 
 ## How to use

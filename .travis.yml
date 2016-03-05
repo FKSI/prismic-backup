@@ -1,0 +1,32 @@
+sudo: false
+language: c
+
+cache:
+  directories:
+  - $HOME/.stack
+
+addons:
+  apt:
+    packages:
+    - libgmp-dev
+
+before_install:
+# Download and unpack the stack executable
+- mkdir -p ~/.local/bin
+- export PATH=$HOME/.local/bin:$PATH
+- mkdir /tmp/stack_dl
+- travis_retry curl -L -o /tmp/stack_dl/stack.tar.gz https://www.stackage.org/stack/$PLATFORM
+- tar xzfv /tmp/stack_dl/stack.tar.gz -C /tmp/stack_dl --strip-components=1
+- mv /tmp/stack_dl/stack ~/.local/bin/
+
+install:
+- stack --no-terminal --skip-ghc-check setup
+
+script:
+- stack --no-terminal --skip-ghc-check install
+
+matrix:
+  include:
+  - env: PLATFORM=linux-x86_64
+  - env: PLATFORM=osx-x86_64
+    os: osx

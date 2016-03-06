@@ -25,8 +25,19 @@ install:
 script:
 - stack --no-terminal --skip-ghc-check install
 
+before_deploy:
+- mv "$HOME/.local/bin/$PROJECT" "$HOME/$PROJECT-$PLATFORM"
+
+deploy:
+  provider: releases
+  api_key: $GH_TOKEN
+  file: "$HOME/$PROJECT-$PLATFORM"
+  skip_cleanup: true
+  on:
+    tags: true
+
 matrix:
   include:
-  - env: PLATFORM=linux-x86_64
-  - env: PLATFORM=osx-x86_64
+  - env: PROJECT=prismic-backup PLATFORM=linux-x86_64
+  - env: PROJECT=prismic-backup PLATFORM=osx-x86_64
     os: osx

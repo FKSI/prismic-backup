@@ -1,5 +1,5 @@
 name:                prismic-backup
-version:             0.1.0
+version:             1.0.0
 synopsis:            CLI tool to backup a Prismic.io repository
 description:         Please see README.md
 homepage:            https://github.com/dsferruzza/prismic-backup#readme

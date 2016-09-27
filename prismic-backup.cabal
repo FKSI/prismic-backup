@@ -3,7 +3,7 @@ version:             1.0.0
 synopsis:            CLI tool to backup a Prismic.io repository
 description:         Please see README.md
 homepage:            https://github.com/dsferruzza/prismic-backup#readme
-license:             GPL
+license:             BSD3
 license-file:        LICENSE
 author:              David Sferruzza
 maintainer:          david.sferruzza@gmail.com

@@ -16,6 +16,7 @@ import qualified Text.Regex as R
 data Config = Config {
     endpoint :: String,
     ref:: String,
+    accessToken :: String,
     docTypes :: String,
     output :: Maybe FilePath }
     deriving (Show, Generic)
@@ -28,7 +29,7 @@ main = WS.withAPISession $ \sess -> do
     let cfg = (config :: Config)
     let outputDir = M.fromMaybe defaultOutputDir (output cfg)
     let documentTypes = R.splitRegex (R.mkRegex ",") $ docTypes cfg
-    let mkQuery = P.Query (endpoint cfg) (ref cfg)
+    let mkQuery = P.Query (endpoint cfg) (ref cfg) (accessToken cfg)
     rc <- mapM (\dt -> fetchDocuments sess outputDir Set.empty $ Left $ mkQuery dt) documentTypes
     let resources = Set.unions rc
     --putStrLn $ show resources

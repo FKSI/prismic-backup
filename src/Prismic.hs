@@ -21,13 +21,15 @@ import Text.Regex.TDFA ((=~), getAllTextMatches)
 data Query = Query {
     endpoint :: String,
     reference :: String,
+    accessToken :: String,
     documentType :: String }
     deriving (Show)
 
 queryString :: Query -> String
 queryString q = "?" ++ L.intercalate "&" params
     where
-        params = fmap (\(n, v) -> n ++ "=" ++ urlEncode v) [format, pageSize, ref, query]
+        params = fmap (\(n, v) -> n ++ "=" ++ urlEncode v) [accessTok,format, pageSize, ref, query]
+        accessTok = ("access_token", accessToken q)
         format = ("format", "json")
         pageSize = ("pageSize", "100")
         ref = ("ref", reference q)

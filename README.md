@@ -26,6 +26,7 @@ Run `stack exec prismic-backup -- [PARAMS]` (or `./prismic-backup [PARAMS]` if y
 
 - `endpoint`: *(string)* API endpoint of the repository. For example: `https://lesbonneschoses.prismic.io/api/documents/search` (the `/documents/search` part is necessary)
 - `ref`: *(string)* reference to use
+- `accessToken` : *(string)* access token to private API
 - `docTypes`: *(string)* a comma-separated list of document types
 - `output`: *(optional path, default = "./output")* path to the backup directory (will be created if it does not exist)
 
